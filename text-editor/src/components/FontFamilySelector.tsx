@@ -6,26 +6,21 @@
 // const FontFamilySelector: React.FC<{
 //   onSelectFamily: (fontFamily: string) => void;
 // }> = ({ onSelectFamily }) => {
-//   const [fonts, setFonts] = useState<string[]>([]);
-//   const [nextPageToken, setNextPageToken] = useState<string | null>(null);
+//   let [fonts, setFonts] = useState<string[]>([]);
 
 //   useEffect(() => {
 //     const fetchFonts = async () => {
 //       const apiKey = 'AIzaSyBcF5Gi8V_LdiPvPSLh9mcvjMzhbrj1Yl8'; // Replace with your Google API key
-//       let apiUrl = `https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}&sort=popularity`;
-
-//       if (nextPageToken) {
-//         apiUrl += `&pageToken=${nextPageToken}`;
-//       }
-
-//       const response = await axios.get(apiUrl);
-//       console.log(response.data.items)
-//       setFonts((prevFonts) => [...prevFonts, ...response.data.items.map((item: any) =>  item.family )]);
-//       setNextPageToken(response.data.nextPageToken);
+//       const response = await axios.get(
+//         `https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}&sort=popularity&fields=items(family)`
+//       );
+//       const topFonts = response.data.items.slice(0, 25).map((item: any) => item.family);
+//       setFonts(topFonts);
+    
 //     };
 
 //     fetchFonts();
-//   }, [nextPageToken]);
+//   }, []);
 
 //   const handleFamilyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 //     const selectedFamily = e.target.value;
@@ -48,13 +43,14 @@
 
 // export default FontFamilySelector;
 
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const FontFamilySelector: React.FC<{
+let FontFamilySelector: React.FC<{
   onSelectFamily: (fontFamily: string) => void;
 }> = ({ onSelectFamily }) => {
-  const [fonts, setFonts] = useState<string[]>([]);
+  let [fonts, setFonts] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchFonts = async () => {
@@ -62,8 +58,9 @@ const FontFamilySelector: React.FC<{
       const response = await axios.get(
         `https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}&sort=popularity&fields=items(family)`
       );
-      const topFonts = response.data.items.slice(0, 10).map((item: any) => item.family);
-      setFonts(topFonts);
+      const topFonts = response.data.items.slice(0, 12).map((item: any) => item.family);
+      const uniqueFonts = Array.from(new Set<string>(topFonts)); // Ensure fonts are unique
+      setFonts(uniqueFonts);
     };
 
     fetchFonts();
@@ -89,6 +86,4 @@ const FontFamilySelector: React.FC<{
 };
 
 export default FontFamilySelector;
-
-
 

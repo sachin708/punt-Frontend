@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 
-const TextEditor: React.FC<{
+let TextEditor: React.FC<{
   fontFamily: string | null;
   fontWeight: string | null;
   italicEnabled: boolean;
-  onSave: (text: string, fontFamily: string, fontWeight: string, italicEnabled: boolean) => void;
+  onSave: (text: string, fontFamily: string | null, fontWeight: string | null, italicEnabled: boolean) => void;
 }> = ({ fontFamily, fontWeight, italicEnabled, onSave }) => {
   const [text, setText] = useState('');
 
   const handleReset = () => {
     setText('');
+    localStorage.removeItem('editorState');
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+  };
+  
   const handleSubmit = () => {
     onSave(text, fontFamily || '', fontWeight || '', italicEnabled);
     // Save to local storage
@@ -33,7 +38,7 @@ const TextEditor: React.FC<{
           fontStyle: italicEnabled ? 'italic' : 'normal',
         }}
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={handleChange}
       />
       <br />
       <div style={{display:"flex", justifyContent:"space-around"}}>
@@ -46,3 +51,4 @@ const TextEditor: React.FC<{
 };
 
 export default TextEditor;
+
